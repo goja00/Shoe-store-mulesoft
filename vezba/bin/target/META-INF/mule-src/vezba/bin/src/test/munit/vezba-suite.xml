@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="vezba-suite.xml" />
+	<munit:test name="vezbaFlow-test" doc:id="dd3a3aa5-fe84-4680-a48f-7cb544a9384b" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Select" doc:id="18c5b2d2-ea9d-469e-9d81-56ac6597f398" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ff10cec3-491c-48ad-89f0-0b7edccf61e1" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java  --- readUrl('classpath://vezbaFlowtest\mock_payload.dwl')]" mediaType="application/java " encoding="UTF-8" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Select" doc:id="6fb3957f-fa26-4cec-a070-626ac27d997a" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="a3c9f17c-5cbd-48fb-875e-40e82bdb6321" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java  --- readUrl('classpath://vezbaFlowtest\mock_payload1.dwl')]" mediaType="application/java " encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="product_shoes" value="#[output application/java --- readUrl('classpath://vezbaFlowtest\mock_variable_.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="e03c1288-2210-4508-93e2-e23017293a37" >
+				<munit:payload value="#[readUrl('classpath://vezbaFlowtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://vezbaFlowtest\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to vezbaFlow" doc:id="c4950fc7-59a8-45cc-9559-a1d4d4912b3f" name="vezbaFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="bad55683-c4c4-4e27-b032-c66844a2ed97" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import vezbaFlowtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	
+	<munit:test name="vezbaFlow-test-error" doc:id="334def47-34b4-46e4-966b-ef0a183ce25b" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Select" doc:id="a93d9c23-a505-4193-ac05-6739279b3e59" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ff10cec3-491c-48ad-89f0-0b7edccf61e1" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					
+					<munit-tools:error typeId="DB:CONNECTIVITY" />
+				</munit-tools:then-return>
+			
+</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Select" doc:id="a26a919f-bee5-4f98-8419-902fd141749c" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="a3c9f17c-5cbd-48fb-875e-40e82bdb6321" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java  --- readUrl('classpath://vezbaFlowtest\mock_payload1.dwl')]" mediaType="application/java " encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="product_shoes" value="#[output application/java --- readUrl('classpath://vezbaFlowtest\mock_variable_.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="dba64245-ff5d-4800-9a25-57b5c458a3a8" >
+				<munit:payload value="#[readUrl('classpath://vezbaFlowtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://vezbaFlowtest\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution>
+			<try doc:name="Try" doc:id="9094ac29-016b-42fc-ad0b-61f13b3cb834" >
+				<flow-ref doc:name="Flow-ref to vezbaFlow" doc:id="18c59242-572c-40c5-a663-3463c8df4881" name="vezbaFlow" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b6499f9b-ecd3-4212-8913-52b5133ba602" >
+						<logger level="INFO" doc:name="Logger" doc:id="cbfef2ff-1efc-439d-8d7d-2a8b32db9a42" message="continue"/>
+					</on-error-continue>
+				</error-handler>
+			</try>
+
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="383544bb-3d54-4a32-9447-09a53cde8a04" is='#[MunitTools::equalTo("Database connection failed!")]' expression="#[payload.error]"/>
+
+		</munit:validation>
+	
+</munit:test>
+	<munit:test name="getProducts-test" doc:id="bcfbe07e-45a4-4eca-824b-13de6dd0029c" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Select" doc:id="bf1d359a-d161-489a-ba4c-c4a53c5c1938" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ff10cec3-491c-48ad-89f0-0b7edccf61e1" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java  --- readUrl('classpath://getProductstest\mock_payload.dwl')]" mediaType="application/java " encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="warehouse_shoes" value="#[output application/json --- readUrl('classpath://getProductstest\mock_variable_.dwl')]" mediaType="application/json" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="92b0a9bd-afbf-44f9-8db5-1bd1e319eb85" >
+				<munit:payload value="#[output application/json  --- readUrl('classpath://getProductstest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json " />
+				<munit:attributes value="#[readUrl('classpath://getProductstest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="warehouse_shoes" value="#[output application/json --- readUrl('classpath://getProductstest\set-event_variable_.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to getProducts" doc:id="1fc573de-a934-442e-ab5a-b2c04cdfa787" name="getProducts"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="16d66e4c-a15c-44c2-a544-25d6c0e65926" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getProductstest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="getWarehouse-test" doc:id="84961b78-21b7-469e-a57b-62f81428c9a8" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Read" doc:id="614a6a54-1ae4-4e94-acf5-13feb0f1bff2" processor="file:read">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="47900fae-34f3-41cd-8b0f-ede43fa098d7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output text/csv  --- readUrl('classpath://getWarehousetest\mock_payload.dwl')]" mediaType="text/csv " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://getWarehousetest\mock_attributes.dwl')]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="6997c313-b9d0-47bd-a0fd-1a27e09306ca" >
+				<munit:payload value="#[readUrl('classpath://getWarehousetest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getWarehousetest\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to getWarehouse" doc:id="59fd9f96-4d6d-458c-a682-1bb37b661bf5" name="getWarehouse"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="bb2e6a0a-3ff9-46a1-bb34-3cd31da0c9e5" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getWarehousetest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

@@ -1,0 +1,72 @@
+[
+    {
+        "id_product": 1,
+        "code": "NIKE123",
+        "name": "Nike Air Zoom Pegasus 38",
+        "quantity": 50,
+        "description": "High-performance running shoes with responsive cushioning"
+    },
+    {
+        "id_product": 2,
+        "code": "ADIDAS456",
+        "name": "Adidas Ultra Boost 21",
+        "quantity": 75,
+        "description": "Comfortable and energy-returning sneakers for athletes"
+    },
+    {
+        "id_product": 3,
+        "code": "REEBOK789",
+        "name": "Reebok Nano X CrossFit Shoes",
+        "quantity": 40,
+        "description": "Durable and stable shoes designed for CrossFit workouts"
+    },
+    {
+        "id_product": 4,
+        "code": "ASICS012",
+        "name": "ASICS GEL-Nimbus 23",
+        "quantity": 60,
+        "description": "Premium running shoes with excellent cushioning and support"
+    },
+    {
+        "id_product": 5,
+        "code": "PUMA345",
+        "name": "Puma Calibrate Runner",
+        "quantity": 35,
+        "description": "Modern sneakers with innovative cushioning technology"
+    },
+    {
+        "id_product": 6,
+        "code": "UNDERARMOUR678",
+        "name": "Under Armour HOVR Phantom 2",
+        "quantity": 45,
+        "description": "Connected sneakers with UAs Record Sensor technology"
+    },
+    {
+        "id_product": 7,
+        "code": "NEWBALANCE901",
+        "name": "New Balance Fresh Foam 1080v11",
+        "quantity": 55,
+        "description": "Plush and comfortable running shoes for long-distance runners"
+    },
+    {
+        "id_product": 8,
+        "code": "SKECHERS234",
+        "name": "Skechers GoRun Razor Excess",
+        "quantity": 30,
+        "description": "Lightweight and responsive running shoes with Hyper Burst cushioning"
+    },
+    {
+        "id_product": 9,
+        "code": "MERRELL567",
+        "name": "Merrell Moab 2 Vent",
+        "quantity": 25,
+        "description": "Breathable hiking shoes with Vibram traction for outdoor adventures"
+    },
+    {
+        "id_product": 10,
+        "code": "COLUMBIA890",
+        "name": "Columbia Crestwood Waterproof",
+        "quantity": 20,
+        "description": "Waterproof hiking shoes with Omni-Grip non-marking traction rubber"
+    }
+]

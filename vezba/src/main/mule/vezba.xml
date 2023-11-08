@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="6d1390df-0557-45f0-9b97-a21eadb97fe9" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="8a92ba82-8ade-42dc-b6eb-b43571a2df5a" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="gojkogojagox123" database="shoe_store" />
+	</db:config>
+	<email:smtp-config name="Email_SMTP" doc:name="Email SMTP" doc:id="f46afe46-0cd7-4918-8355-bd03d074ae7b" >
+		<email:smtp-connection host="smtp.gmail.com" port="587" user="covid23serbia@gmail.com" password="covidcovid" >
+			<email:properties >
+				<email:property key="mail.smtp.starttls.enable" value="true&#10;" />
+			</email:properties>
+		</email:smtp-connection>
+	</email:smtp-config>
+	<file:config name="File_Config" doc:name="File Config" doc:id="943ad784-a13b-416b-9737-75d5a7ea57e1" >
+		<file:connection workingDir="C:\Users\ggrubisic\Desktop" />
+	</file:config>
+	<flow name="vezbaFlow" doc:id="450caa0e-0663-49da-8458-e63b6ca634c3" >
+		<http:listener doc:name="Listener" doc:id="6d2c051b-7253-414d-8421-97ba1962d926" config-ref="HTTP_Listener_config" path="/compare"/>
+		<flow-ref doc:name="Flow Reference" doc:id="0b5d1d66-1e35-422d-806d-9a3d6b180703" name="getWarehouse" />
+		<flow-ref doc:name="Flow Reference" doc:id="7a38ef0b-e180-42b1-82b6-5f6e653a831c" name="getProducts"/>
+		<ee:transform doc:name="Transform Message" doc:id="94e4d408-5bbf-4933-8e1f-bfc5a595a1ba" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+vars.product_shoes filter (product) -> 
+    not (vars.warehouse_shoes.code contains product.code)
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;vars.product_shoes filter (product) -&gt; &#10;    not (vars.warehouse_shoes.code contains product.code)]" doc:name="Shoes for deletion" doc:id="5e829f59-dd48-41e7-8916-26f5e8b58999" variableName="deletion_shoes" />
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="77f3eb2a-ac61-4f7e-9720-6c66b49dad5f" type="DB:CONNECTIVITY">
+				<ee:transform doc:name="Transform Message" doc:id="33c96aec-1640-49d7-86c3-fe7171c81216" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"error":"Database connection failed!"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+	<sub-flow name="getProducts" doc:id="cffbc155-c6c8-4c97-b580-0364a9240fd6" >
+		<db:select doc:name="Select" doc:id="ff10cec3-491c-48ad-89f0-0b7edccf61e1" config-ref="Database_Config">
+			<db:sql><![CDATA[select * from products]]></db:sql>
+		</db:select>
+		<set-variable value="#[payload]" doc:name="Shoes from web application" doc:id="6b9eada7-6f62-47b3-919f-9ea3ba33220c" variableName="product_shoes" />
+	</sub-flow>
+	<flow name="emailSender" doc:id="e4ab0bcc-ea19-4462-b6d5-351636a0eaa1" >
+		<parse-template doc:name="Parse Template" doc:id="2c4afdea-4497-492f-a4a9-dc736b2cbc71">
+			<content>#[payload]</content>
+		</parse-template>
+		<email:send doc:name="Send" doc:id="06508f46-046e-4f8b-94cc-4ff420fcb4ec" config-ref="Email_SMTP">
+			<email:to-addresses>
+				<email:to-address value="gojkogoja00@gmail.com" />
+			</email:to-addresses>
+		</email:send>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="d90e84b5-6b78-45e8-bc33-28513fcf8144" >
+				<set-payload value='#["Error while sending email"]' doc:name="Set Payload" doc:id="cb91bbbc-7b23-4a62-b171-c468a5ecfe09" />
+			</on-error-continue>
+		</error-handler>
+	</flow>
+	<sub-flow name="getWarehouse" doc:id="fb1f8f8f-cacf-4f8f-9c86-7ff522003a14" >
+		<file:read doc:name="Read" doc:id="47900fae-34f3-41cd-8b0f-ede43fa098d7" config-ref="File_Config" path="warehouse.csv"/>
+		<ee:transform doc:name="Transform Message" doc:id="6f447dd9-a3ba-47b2-967b-c372cfb8ac2e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	id: payload01.id,
+	name: payload01.name,
+	quantity: payload01.quantity,
+	description: payload01.description,
+	code: payload01.code
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Warehouse shoes" doc:id="787c2da3-12a9-4d1f-8526-8b12fa13c992" variableName="warehouse_shoes" />
+	</sub-flow>
+</mule>

@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_fb1f8f8f_cacf_4f8f_9c86_7ff522003a14_Output_Payload = Array<{|  name?: String,   code?: String|}>
+
